@@ -1,11 +1,19 @@
-require_relative 'lib/product'
-require_relative 'lib/book'
-require_relative 'lib/film'
-require_relative 'lib/product_collection'
+require 'rexml/document'
+require_relative 'product'
+require_relative 'movie'
+require_relative 'disk'
+require_relative 'book'
 
-current_path = File.dirname(__FILE__)
-collection = ProductCollection.from_dir(current_path + '/data')
-collection.sort!(by: :price, order: :asc)
-collection.to_a.each do |product|
-  puts product
+products = Product.read_from_xml("data/products.xml")
+choice = nil
+total_price = 0
+while choice != "x"
+  Product.showcase(products)
+  choice = STDIN.gets.chomp
+  if choice != "x" && choice.to_i < products.size && choice.to_i >= 0
+    product = products[choice.to_i]
+    total_price += product.buy
+  end
 end
+
+puts "Спасибо за покупки, с Вас #{total_price} руб."
